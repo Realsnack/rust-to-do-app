@@ -32,6 +32,7 @@ impl FromStr for SupportedCommand {
             "update" => Ok(SupportedCommand::Update),
             "delete" => Ok(SupportedCommand::Delete),
             "help" => Ok(SupportedCommand::Help),
+            "exit" => Ok(SupportedCommand::Exit),
             _ => Err(()),
         }
     }
