@@ -9,8 +9,8 @@ pub enum SupportedCommand {
     Exit
 }
 
-impl SupportedCommand {
-    pub fn to_string(&self) -> String {
+impl ToString for SupportedCommand {
+    fn to_string(&self) -> String {
         match self {
             SupportedCommand::Add => String::from("add"),
             SupportedCommand::List => String::from("list"),
