@@ -85,6 +85,7 @@ fn add_task(list_of_tasks: &mut TaskList) {
     println!("Add a task");
 
     list_of_tasks.add_task(String::from("Hello task"), None, None);
+    press_enter();
 }
 
 fn list_tasks(list_of_tasks: &TaskList) {
@@ -92,6 +93,7 @@ fn list_tasks(list_of_tasks: &TaskList) {
 
     if list_of_tasks.tasks.len() == 0 {
         println!("No tasks to list");
+        press_enter();
         return;
     }
 
@@ -104,7 +106,9 @@ fn list_tasks(list_of_tasks: &TaskList) {
         if task.due_date.is_some() {
             println!("    Due date: {}", task.due_date.as_ref().unwrap());
         }
+        println!("    Status: {}", task.status.to_string());
     }
+    press_enter();
 }
 
 fn update_task(list_of_tasks: &mut TaskList) {
@@ -133,6 +137,7 @@ fn help() {
     println!("    The application will first ask you to enter a title for the task");
     println!("    Then it will ask you to enter a description for the task - if you don't want to enter a description, just press enter");
     println!("    Finally it will ask you to enter a due date for the task - if you don't want to enter a due date, just press enter");
+    println!("    The task is automatically created with status 'Not started'");
     println!("  {} - list all tasks", "list".bold().cyan());
     println!("    This will print a list of all tasks");
     println!("    Each task will have an ID, title, description, and due date. If a task doesn't have a description or due date, it will be marked as such");
@@ -145,9 +150,13 @@ fn help() {
     println!("  {} - prints this help message", "help".bold().grey());
     println!("  {} - exits the program", "exit".bold().magenta());
     println!();
+    press_enter();
+
+    println!("{}", CLEAR_SCREEN);
+}
+
+fn press_enter() {
     print!("Press enter to continue");
     io::stdout().flush().expect("Failed to flush");
     io::stdin().read_line(&mut String::new()).expect("Failed to read line");
-
-    println!("{}", CLEAR_SCREEN);
 }

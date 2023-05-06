@@ -7,6 +7,16 @@ pub enum TaskStatus {
     Completed,
 }
 
+impl ToString for TaskStatus {
+    fn to_string(&self) -> String {
+        match self {
+            TaskStatus::NotStarted => "Not Started".to_string(),
+            TaskStatus::InProgress => "In Progress".to_string(),
+            TaskStatus::Completed => "Completed".to_string(),
+        }
+    }
+}
+
 pub struct Task {
     pub id: usize,
     pub title: String,
