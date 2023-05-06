@@ -2,6 +2,8 @@ pub mod command;
 pub mod task;
 pub mod task_list;
 
+use colorize::AnsiColor;
+
 use std::{
     io::{self, Write},
     str::FromStr,
@@ -86,10 +88,22 @@ fn add_task(list_of_tasks: &mut TaskList) {
 }
 
 fn list_tasks(list_of_tasks: &TaskList) {
-    println!("List of tasks");
+    println!("{}", CLEAR_SCREEN);
 
+    if list_of_tasks.tasks.len() == 0 {
+        println!("No tasks to list");
+        return;
+    }
+
+    println!("List of tasks:");
     for task in &list_of_tasks.tasks {
         println!("  {} - {}", task.id, task.title);
+        if task.description.is_some() {
+            println!("    Description: {}", task.description.as_ref().unwrap());
+        }
+        if task.due_date.is_some() {
+            println!("    Due date: {}", task.due_date.as_ref().unwrap());
+        }
     }
 }
 
@@ -108,7 +122,6 @@ fn delete_task(list_of_tasks: &mut TaskList) {
     // 2. delete task
 }
 
-use colorize::AnsiColor;
 
 fn help() {
     println!("{}", CLEAR_SCREEN);
