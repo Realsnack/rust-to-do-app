@@ -1,6 +1,7 @@
 pub mod command;
 pub mod task;
 pub mod task_list;
+pub mod task_status;
 
 use colorize::AnsiColor;
 
@@ -11,6 +12,8 @@ use std::{
 
 use command::SupportedCommand;
 use task_list::TaskList;
+
+use crate::task_status::TaskStatus;
 
 const CLEAR_SCREEN: &str = "\x1B[2J";
 
@@ -231,10 +234,10 @@ fn update_task(list_of_tasks: &mut TaskList) {
                 break;
             },
             "status" => {
-                println!("Available statuses: {:?}, {:?}, {:?}", task::TaskStatus::NotStarted.to_string(), task::TaskStatus::InProgress.to_string(), task::TaskStatus::Completed.to_string());
+                println!("Available statuses: {:?}, {:?}, {:?}", TaskStatus::NotStarted.to_string(), TaskStatus::InProgress.to_string(), TaskStatus::Completed.to_string());
                 let new_status = get_user_input("Enter new status");
                 println!();
-                let new_status = new_status.parse::<task::TaskStatus>();
+                let new_status = new_status.parse::<TaskStatus>();
                 match new_status {
                     Ok(parsed_status) => {
                         list_of_tasks.update_task_status(task_id, parsed_status);

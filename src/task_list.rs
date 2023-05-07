@@ -1,5 +1,5 @@
 use crate::task::Task;
-use crate::task::TaskStatus;
+use crate::TaskStatus;
 
 // THINK: Maybe use a hashmap instead of a vector?
 pub struct TaskList {
