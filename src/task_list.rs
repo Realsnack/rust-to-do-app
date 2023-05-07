@@ -46,4 +46,16 @@ impl TaskList {
             task.set_due_date(due_date);
         }
     }
+
+    pub fn update_task_status(&mut self, task_id: usize, status: TaskStatus) {
+        let task = self.tasks.iter_mut().find(|t| t.id == task_id);
+
+        if let Some(task) = task {
+            task.set_status(status);
+        }
+    }
+
+    pub fn get_task_by_id(&self, task_id: usize) -> Option<&Task> {
+        self.tasks.iter().find(|t| t.id == task_id)
+    }
 }

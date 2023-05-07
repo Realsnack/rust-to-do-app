@@ -57,7 +57,7 @@ fn command_selection() -> SupportedCommand {
     println!("  {} - exits the program", "exit".bold().magenta());
     println!();
 
-    let command = get_user_input();
+    let command = get_user_input("Enter command");
     let command_enum = SupportedCommand::from_str(&command.to_lowercase());
 
     if command_enum.is_err() {
@@ -70,7 +70,8 @@ fn command_selection() -> SupportedCommand {
 }
 
 
-fn get_user_input() -> String {
+fn get_user_input(prompt_text: &str) -> String {
+    println!("{}", prompt_text);
     let mut input = String::new();
     print!("> ");
     io::stdout().flush().expect("Failed to flush");
@@ -84,8 +85,7 @@ fn get_user_input() -> String {
 fn add_task(list_of_tasks: &mut TaskList) {
     let mut title;
     loop {
-        println!("Enter a title for the task:");
-        title = get_user_input();
+        title = get_user_input("Enter title for task");
         println!();
 
         if title.is_empty() {
@@ -99,8 +99,7 @@ fn add_task(list_of_tasks: &mut TaskList) {
 
     let task_id = list_of_tasks.add_task(title);
 
-    println!("Enter a description for the task:");
-    let description = get_user_input();
+    let description = get_user_input("Enter a description for the task:");
     println!();
 
     if !description.is_empty() {
@@ -108,8 +107,7 @@ fn add_task(list_of_tasks: &mut TaskList) {
     }
 
     loop {
-        println!("Enter a due date and time for the task (dd.mm.YYYY HH:MM):");
-        let mut due_date = get_user_input();
+        let mut due_date = get_user_input("Enter a due date and time for the task (dd.mm.YYYY HH:MM):");
         println!();
         
         if due_date.is_empty() {
@@ -161,12 +159,99 @@ fn list_tasks(list_of_tasks: &TaskList) {
     press_enter();
 }
 
-// TODO: Update task
 fn update_task(list_of_tasks: &mut TaskList) {
     if list_of_tasks.tasks.len() == 0 {
         println!("No tasks to update");
         press_enter();
         return;
+    }
+    let task_id_input = get_user_input("Enter task Id to update");
+    // convert task_id to usize
+    let task_id_input = task_id_input.parse::<usize>();
+    let mut task_id: usize = 0;
+
+    match task_id_input {
+        Ok(parsed_task_id) => {
+            if task_id > list_of_tasks.tasks.len() {
+                println!("Invalid task Id: {}", task_id);
+                press_enter();
+                return;
+            }
+            task_id = parsed_task_id;
+        },
+        Err(_) => {
+            println!("Invalid task");
+            press_enter();
+            return;
+        }
+    }
+
+    println!("{}", CLEAR_SCREEN);
+    // print task and details
+    println!("Task: {}", list_of_tasks.get_task_by_id(task_id).unwrap().title);
+    println!("  Description: {}", list_of_tasks.get_task_by_id(task_id).unwrap().description.clone().unwrap_or("Not provided".to_string()));
+    let due_date = list_of_tasks.get_task_by_id(task_id).unwrap().due_date.clone();
+    if due_date.is_some() {
+        println!("  Due date: {}", due_date.unwrap());
+    } else {
+        println!("  Due date: Not provided");
+    }
+    println!("  Status: {}", list_of_tasks.get_task_by_id(task_id).unwrap().status.to_string());
+
+    loop {
+        let field_to_update = get_user_input("Choose field to update").to_lowercase();
+        println!();
+        
+        match field_to_update.as_str() {
+            "description" => {
+                let new_description = get_user_input("Enter new description");
+                println!();
+                list_of_tasks.update_task_description(task_id, new_description);
+                break;
+            },
+            "due date" => {
+                loop {
+                    let new_date_string = get_user_input("Enter new due date and time (dd.mm.YYYY HH:MM)");
+                    println!();
+                    let new_date_string = new_date_string + ":00";
+                    let parsed_date = chrono::NaiveDateTime::parse_from_str(&new_date_string, "%d.%m.%Y %H:%M:%S");
+                    match parsed_date {
+                        Ok(_) => {
+                            list_of_tasks.update_task_due_date(task_id, parsed_date.unwrap());
+                            break;
+                        },
+                        Err(_) => {
+                            println!("Invalid date format, please try again");
+                            println!("{}", parsed_date.unwrap_err());
+                            println!();
+                            continue;
+                        }
+                    }
+                }
+                break;
+            },
+            "status" => {
+                println!("Available statuses: {:?}, {:?}, {:?}", task::TaskStatus::NotStarted.to_string(), task::TaskStatus::InProgress.to_string(), task::TaskStatus::Completed.to_string());
+                let new_status = get_user_input("Enter new status");
+                println!();
+                let new_status = new_status.parse::<task::TaskStatus>();
+                match new_status {
+                    Ok(parsed_status) => {
+                        list_of_tasks.update_task_status(task_id, parsed_status);
+                        break;
+                    },
+                    Err(_) => {
+                        println!("Invalid status, please try again");
+                        continue;
+                    }
+                }
+            },
+            _ => {
+                println!("Invalid field to update: {}", field_to_update);
+                println!();
+                continue;
+            }
+        }
     }
 
     // 1. select task Id
