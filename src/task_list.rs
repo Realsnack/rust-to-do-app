@@ -38,4 +38,12 @@ impl TaskList {
             task.set_description(description);
         }
     }
+
+    pub fn update_task_due_date(&mut self, task_id: usize, due_date: chrono::NaiveDateTime) {
+        let task = self.tasks.iter_mut().find(|t| t.id == task_id);
+
+        if let Some(task) = task {
+            task.set_due_date(due_date);
+        }
+    }
 }

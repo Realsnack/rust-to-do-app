@@ -1,5 +1,5 @@
 use chrono::DateTime;
-use chrono::Local;
+use chrono::NaiveDateTime;
 
 pub enum TaskStatus {
     NotStarted,
@@ -21,7 +21,7 @@ pub struct Task {
     pub id: usize,
     pub title: String,
     pub description: Option<String>,
-    pub due_date: Option<DateTime<Local>>,
+    pub due_date: Option<NaiveDateTime>,
     pub status: TaskStatus,
 }
 
@@ -40,7 +40,7 @@ impl Task {
         self.description = Some(description);
     }
 
-    pub fn set_due_date(&mut self, due_date: DateTime<Local>) {
+    pub fn set_due_date(&mut self, due_date: NaiveDateTime) {
         self.due_date = Some(due_date);
     }
 

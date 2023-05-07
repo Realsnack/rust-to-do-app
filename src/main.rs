@@ -2,7 +2,6 @@ pub mod command;
 pub mod task;
 pub mod task_list;
 
-use chrono::DateTime;
 use colorize::AnsiColor;
 
 use std::{
@@ -43,7 +42,6 @@ fn main() {
                 println!("Exiting");
                 break;
             }
-            _ => println!("Not implemented"),
         }
     }
 }
@@ -59,19 +57,8 @@ fn command_selection() -> SupportedCommand {
     println!("  {} - exits the program", "exit".bold().magenta());
     println!();
 
-    // Read user input
-    let mut command = String::new();
-    print!("> ");
-    io::stdout().flush().expect("Failed to flush");
-    io::stdin()
-        .read_line(&mut command)
-        .expect("Failed to read line");
-
-    // Trim string and convert to lowercase
-    command = command.trim().to_string();
-    command = command.to_lowercase();
-
-    let command_enum = SupportedCommand::from_str(&command);
+    let command = get_user_input();
+    let command_enum = SupportedCommand::from_str(&command.to_lowercase());
 
     if command_enum.is_err() {
         println!("Invalid command: {}", command);
@@ -82,11 +69,24 @@ fn command_selection() -> SupportedCommand {
     command_enum.unwrap()
 }
 
+
+fn get_user_input() -> String {
+    let mut input = String::new();
+    print!("> ");
+    io::stdout().flush().expect("Failed to flush");
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read line");
+
+    input.trim().to_string()
+}
+
 fn add_task(list_of_tasks: &mut TaskList) {
     let mut title;
     loop {
         println!("Enter a title for the task:");
         title = get_user_input();
+        println!();
 
         if title.is_empty() {
             println!("Title cannot be empty");
@@ -99,27 +99,41 @@ fn add_task(list_of_tasks: &mut TaskList) {
 
     let task_id = list_of_tasks.add_task(title);
 
-    println!("Task {} added", task_id);
-
     println!("Enter a description for the task:");
     let description = get_user_input();
+    println!();
 
     if !description.is_empty() {
         list_of_tasks.update_task_description(task_id, description);
     }
 
+    loop {
+        println!("Enter a due date and time for the task (dd.mm.YYYY HH:MM):");
+        let mut due_date = get_user_input();
+        println!();
+        
+        if due_date.is_empty() {
+            break;
+        }
+        
+        due_date += ":00";
+        
+        let parsed_date = chrono::NaiveDateTime::parse_from_str(&due_date, "%d.%m.%Y %H:%M:%S");
+        
+        match parsed_date {
+            Ok(_) => {
+                list_of_tasks.update_task_due_date(task_id, parsed_date.unwrap());
+                break;
+            },
+            Err(_) => {
+                println!("Invalid date format, please try again");
+                println!("{}", parsed_date.unwrap_err());
+                println!();
+            }
+        }
+    }
+
     press_enter();
-}
-
-fn get_user_input() -> String {
-    let mut input = String::new();
-    print!("> ");
-    io::stdout().flush().expect("Failed to flush");
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line");
-
-    input.trim().to_string()
 }
 
 fn list_tasks(list_of_tasks: &TaskList) {
@@ -147,6 +161,7 @@ fn list_tasks(list_of_tasks: &TaskList) {
     press_enter();
 }
 
+// TODO: Update task
 fn update_task(list_of_tasks: &mut TaskList) {
     println!("Update a task");
 
@@ -155,6 +170,7 @@ fn update_task(list_of_tasks: &mut TaskList) {
     // 3. update task
 }
 
+// TODO: Delete task
 fn delete_task(list_of_tasks: &mut TaskList) {
     println!("Delete a task");
 
