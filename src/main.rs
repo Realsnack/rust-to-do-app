@@ -2,6 +2,7 @@ pub mod command;
 pub mod task;
 pub mod task_list;
 
+use chrono::DateTime;
 use colorize::AnsiColor;
 
 use std::{
@@ -30,7 +31,7 @@ fn main() {
 
     loop {
         let command = command_selection();
-        println!("Selected command: {:?}", command.to_string());
+        println!();
 
         match command {
             SupportedCommand::Add => add_task(&mut list_of_tasks),
@@ -53,7 +54,7 @@ fn command_selection() -> SupportedCommand {
     println!("  {} - adds a task", "add".bold().green());
     println!("  {} - lists all tasks", "list".bold().cyan());
     println!("  {} - updates a task", "update".bold().yellow());
-    println!("  {} - deletes a task",  "delete".bold().red());
+    println!("  {} - deletes a task", "delete".bold().red());
     println!("  {} - prints this help message", "help".bold().grey());
     println!("  {} - exits the program", "exit".bold().magenta());
     println!();
@@ -82,10 +83,43 @@ fn command_selection() -> SupportedCommand {
 }
 
 fn add_task(list_of_tasks: &mut TaskList) {
-    println!("Add a task");
+    let mut title;
+    loop {
+        println!("Enter a title for the task:");
+        title = get_user_input();
 
-    list_of_tasks.add_task(String::from("Hello task"), None, None);
+        if title.is_empty() {
+            println!("Title cannot be empty");
+            println!();
+            continue;
+        } else {
+            break;
+        }
+    }
+
+    let task_id = list_of_tasks.add_task(title);
+
+    println!("Task {} added", task_id);
+
+    println!("Enter a description for the task:");
+    let description = get_user_input();
+
+    if !description.is_empty() {
+        list_of_tasks.update_task_description(task_id, description);
+    }
+
     press_enter();
+}
+
+fn get_user_input() -> String {
+    let mut input = String::new();
+    print!("> ");
+    io::stdout().flush().expect("Failed to flush");
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read line");
+
+    input.trim().to_string()
 }
 
 fn list_tasks(list_of_tasks: &TaskList) {
@@ -98,6 +132,7 @@ fn list_tasks(list_of_tasks: &TaskList) {
     }
 
     println!("List of tasks:");
+    println!();
     for task in &list_of_tasks.tasks {
         println!("  {} - {}", task.id, task.title);
         if task.description.is_some() {
@@ -107,6 +142,7 @@ fn list_tasks(list_of_tasks: &TaskList) {
             println!("    Due date: {}", task.due_date.as_ref().unwrap());
         }
         println!("    Status: {}", task.status.to_string());
+        println!();
     }
     press_enter();
 }
@@ -125,7 +161,6 @@ fn delete_task(list_of_tasks: &mut TaskList) {
     // 1. select task Id
     // 2. delete task
 }
-
 
 fn help() {
     println!("{}", CLEAR_SCREEN);
@@ -158,5 +193,7 @@ fn help() {
 fn press_enter() {
     print!("Press enter to continue");
     io::stdout().flush().expect("Failed to flush");
-    io::stdin().read_line(&mut String::new()).expect("Failed to read line");
+    io::stdin()
+        .read_line(&mut String::new())
+        .expect("Failed to read line");
 }
