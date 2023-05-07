@@ -2,6 +2,7 @@ use crate::TaskStatus;
 
 use chrono::NaiveDateTime;
 
+#[derive(Debug)]
 pub struct Task {
     pub id: usize,
     pub title: String,
