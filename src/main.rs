@@ -254,12 +254,9 @@ fn update_task(list_of_tasks: &mut TaskList) {
         }
     }
 
-    // 1. select task Id
-    // 2. select field to update
-    // 3. update task
+    press_enter();
 }
 
-// TODO: Delete task
 fn delete_task(list_of_tasks: &mut TaskList) {
     if list_of_tasks.tasks.len() == 0 {
         println!("No tasks to delete");
@@ -267,8 +264,45 @@ fn delete_task(list_of_tasks: &mut TaskList) {
         return;
     }
 
-    // 1. select task Id
-    // 2. delete task
+    if list_of_tasks.tasks.len() == 0 {
+        println!("No tasks to update");
+        press_enter();
+        return;
+    }
+    let task_id_input = get_user_input("Enter task Id to update");
+    // convert task_id to usize
+    let task_id_input = task_id_input.parse::<usize>();
+    let mut task_id: usize = 0;
+
+    match task_id_input {
+        Ok(parsed_task_id) => {
+            if task_id > list_of_tasks.tasks.len() {
+                println!("Invalid task Id: {}", task_id);
+                press_enter();
+                return;
+            }
+            task_id = parsed_task_id;
+        },
+        Err(_) => {
+            println!("Invalid task");
+            press_enter();
+            return;
+        }
+    }
+
+    println!("{}", CLEAR_SCREEN);
+    let deletion_result = list_of_tasks.delete_task(task_id);
+
+    match deletion_result {
+        Ok(_) => {
+            println!("Task deleted successfully");
+        },
+        Err(_) => {
+            println!("Failed to delete task");
+        }
+    }
+
+    press_enter();
 }
 
 fn help() {

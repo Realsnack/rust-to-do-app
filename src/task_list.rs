@@ -55,6 +55,17 @@ impl TaskList {
         }
     }
 
+    pub fn delete_task(&mut self, task_id: usize) -> Result<(), ()> {
+        let task_index = self.tasks.iter().position(|t| t.id == task_id);
+
+        if let Some(task_index) = task_index {
+            self.tasks.remove(task_index);
+            Ok(())
+        } else {
+            Err(())
+        }
+    }
+
     pub fn get_task_by_id(&self, task_id: usize) -> Option<&Task> {
         self.tasks.iter().find(|t| t.id == task_id)
     }
