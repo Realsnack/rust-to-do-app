@@ -115,7 +115,7 @@ fn add_task(list_of_tasks: &mut TaskList) {
         if due_date.is_empty() {
             break;
         }
-        
+
         due_date += ":00";
         
         let parsed_date = chrono::NaiveDateTime::parse_from_str(&due_date, "%d.%m.%Y %H:%M:%S");
@@ -163,7 +163,11 @@ fn list_tasks(list_of_tasks: &TaskList) {
 
 // TODO: Update task
 fn update_task(list_of_tasks: &mut TaskList) {
-    println!("Update a task");
+    if list_of_tasks.tasks.len() == 0 {
+        println!("No tasks to update");
+        press_enter();
+        return;
+    }
 
     // 1. select task Id
     // 2. select field to update
@@ -172,7 +176,11 @@ fn update_task(list_of_tasks: &mut TaskList) {
 
 // TODO: Delete task
 fn delete_task(list_of_tasks: &mut TaskList) {
-    println!("Delete a task");
+    if list_of_tasks.tasks.len() == 0 {
+        println!("No tasks to delete");
+        press_enter();
+        return;
+    }
 
     // 1. select task Id
     // 2. delete task
