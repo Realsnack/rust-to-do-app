@@ -1,7 +1,9 @@
+use serde_derive::Serialize;
+
 use crate::TaskStatus;
 use crate::naive_date_time_wrapper::NaiveDateTimeWrapper;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Task {
     pub id: usize,
     pub title: String,
