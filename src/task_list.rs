@@ -1,3 +1,4 @@
+use crate::naive_date_time_wrapper::NaiveDateTimeWrapper;
 use crate::task::Task;
 use crate::TaskStatus;
 
@@ -39,7 +40,7 @@ impl TaskList {
         }
     }
 
-    pub fn update_task_due_date(&mut self, task_id: usize, due_date: chrono::NaiveDateTime) {
+    pub fn update_task_due_date(&mut self, task_id: usize, due_date: NaiveDateTimeWrapper) {
         let task = self.tasks.iter_mut().find(|t| t.id == task_id);
 
         if let Some(task) = task {
