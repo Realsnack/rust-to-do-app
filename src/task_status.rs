@@ -38,3 +38,13 @@ impl FromStr for TaskStatus {
         }
     }
 }
+
+impl Clone for TaskStatus {
+    fn clone(&self) -> Self {
+        match self {
+            TaskStatus::NotStarted => TaskStatus::NotStarted,
+            TaskStatus::InProgress => TaskStatus::InProgress,
+            TaskStatus::Completed => TaskStatus::Completed,
+        }
+    }
+}

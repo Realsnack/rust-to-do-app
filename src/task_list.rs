@@ -1,6 +1,6 @@
 use crate::naive_date_time_wrapper::NaiveDateTimeWrapper;
 use crate::task::Task;
-use crate::TaskStatus;
+use crate::{TaskStatus, persistence};
 
 // THINK: Maybe use a hashmap instead of a vector?
 pub struct TaskList {
@@ -64,6 +64,16 @@ impl TaskList {
             Ok(())
         } else {
             Err(())
+        }
+    }
+
+    // fn to use persistence::save_tasks_to_csv
+    pub fn save_tasks_to_csv(&self){
+        let save_result = persistence::save_tasks_to_csv(&self.tasks);
+
+        match save_result {
+            Ok(_) => println!("Tasks saved to csv"),
+            Err(e) => println!("Error saving tasks to csv: {}", e),
         }
     }
 

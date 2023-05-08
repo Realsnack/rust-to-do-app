@@ -35,3 +35,15 @@ impl Task {
         self.status = status;
     }
 }
+
+impl Clone for Task {
+    fn clone(&self) -> Self {
+        Task {
+            id: self.id,
+            title: self.title.clone(),
+            description: self.description.clone(),
+            due_date: self.due_date.clone(),
+            status: self.status.clone(),
+        }
+    }
+}

@@ -1,5 +1,6 @@
 pub mod command;
 pub mod naive_date_time_wrapper;
+pub mod persistence;
 pub mod task;
 pub mod task_list;
 pub mod task_status;
@@ -43,6 +44,7 @@ fn main() {
             SupportedCommand::Delete => delete_task(&mut list_of_tasks),
             SupportedCommand::Help => help(),
             SupportedCommand::Exit => {
+                list_of_tasks.save_tasks_to_csv();
                 println!("Exiting");
                 break;
             }
