@@ -1,6 +1,9 @@
 pub mod command;
+pub mod naive_date_time_wrapper;
+pub mod persistence;
 pub mod task;
 pub mod task_list;
+pub mod task_status;
 
 use colorize::AnsiColor;
 
@@ -11,6 +14,8 @@ use std::{
 
 use command::SupportedCommand;
 use task_list::TaskList;
+
+use crate::{task_status::TaskStatus, naive_date_time_wrapper::NaiveDateTimeWrapper};
 
 const CLEAR_SCREEN: &str = "\x1B[2J";
 
@@ -39,6 +44,7 @@ fn main() {
             SupportedCommand::Delete => delete_task(&mut list_of_tasks),
             SupportedCommand::Help => help(),
             SupportedCommand::Exit => {
+                list_of_tasks.save_tasks_to_csv();
                 println!("Exiting");
                 break;
             }
@@ -68,7 +74,6 @@ fn command_selection() -> SupportedCommand {
 
     command_enum.unwrap()
 }
-
 
 fn get_user_input(prompt_text: &str) -> String {
     println!("{}", prompt_text);
@@ -107,25 +112,26 @@ fn add_task(list_of_tasks: &mut TaskList) {
     }
 
     loop {
-        let mut due_date = get_user_input("Enter a due date and time for the task (dd.mm.YYYY HH:MM):");
+        let mut due_date =
+            get_user_input("Enter a due date and time for the task (dd.mm.YYYY HH:MM):");
         println!();
-        
+
         if due_date.is_empty() {
             break;
         }
 
         due_date += ":00";
-        
-        let parsed_date = chrono::NaiveDateTime::parse_from_str(&due_date, "%d.%m.%Y %H:%M:%S");
-        
+
+        let parsed_date = NaiveDateTimeWrapper::parse_from_str(&due_date, "%d.%m.%Y %H:%M:%S");
+
         match parsed_date {
             Ok(_) => {
                 list_of_tasks.update_task_due_date(task_id, parsed_date.unwrap());
                 break;
-            },
+            }
             Err(_) => {
                 println!("Invalid date format, please try again");
-                println!("{}", parsed_date.unwrap_err());
+                println!("{:?}", parsed_date.unwrap_err());
                 println!();
             }
         }
@@ -178,7 +184,7 @@ fn update_task(list_of_tasks: &mut TaskList) {
                 return;
             }
             task_id = parsed_task_id;
-        },
+        }
         Err(_) => {
             println!("Invalid task");
             press_enter();
@@ -188,64 +194,95 @@ fn update_task(list_of_tasks: &mut TaskList) {
 
     println!("{}", CLEAR_SCREEN);
     // print task and details
-    println!("Task: {}", list_of_tasks.get_task_by_id(task_id).unwrap().title);
-    println!("  Description: {}", list_of_tasks.get_task_by_id(task_id).unwrap().description.clone().unwrap_or("Not provided".to_string()));
-    let due_date = list_of_tasks.get_task_by_id(task_id).unwrap().due_date.clone();
+    println!(
+        "Task: {}",
+        list_of_tasks.get_task_by_id(task_id).unwrap().title
+    );
+    println!(
+        "  Description: {}",
+        list_of_tasks
+            .get_task_by_id(task_id)
+            .unwrap()
+            .description
+            .clone()
+            .unwrap_or("Not provided".to_string())
+    );
+    let due_date = list_of_tasks
+        .get_task_by_id(task_id)
+        .unwrap()
+        .due_date
+        .clone();
     if due_date.is_some() {
         println!("  Due date: {}", due_date.unwrap());
     } else {
         println!("  Due date: Not provided");
     }
-    println!("  Status: {}", list_of_tasks.get_task_by_id(task_id).unwrap().status.to_string());
+    println!(
+        "  Status: {}",
+        list_of_tasks
+            .get_task_by_id(task_id)
+            .unwrap()
+            .status
+            .to_string()
+    );
 
     loop {
         let field_to_update = get_user_input("Choose field to update").to_lowercase();
         println!();
-        
+
         match field_to_update.as_str() {
             "description" => {
                 let new_description = get_user_input("Enter new description");
                 println!();
                 list_of_tasks.update_task_description(task_id, new_description);
                 break;
-            },
+            }
             "due date" => {
                 loop {
-                    let new_date_string = get_user_input("Enter new due date and time (dd.mm.YYYY HH:MM)");
+                    let new_date_string =
+                        get_user_input("Enter new due date and time (dd.mm.YYYY HH:MM)");
                     println!();
                     let new_date_string = new_date_string + ":00";
-                    let parsed_date = chrono::NaiveDateTime::parse_from_str(&new_date_string, "%d.%m.%Y %H:%M:%S");
+                    let parsed_date = NaiveDateTimeWrapper::parse_from_str(
+                        &new_date_string,
+                        "%d.%m.%Y %H:%M:%S",
+                    );
                     match parsed_date {
                         Ok(_) => {
                             list_of_tasks.update_task_due_date(task_id, parsed_date.unwrap());
                             break;
-                        },
+                        }
                         Err(_) => {
                             println!("Invalid date format, please try again");
-                            println!("{}", parsed_date.unwrap_err());
+                            println!("{:?}", parsed_date.unwrap_err());
                             println!();
                             continue;
                         }
                     }
                 }
                 break;
-            },
+            }
             "status" => {
-                println!("Available statuses: {:?}, {:?}, {:?}", task::TaskStatus::NotStarted.to_string(), task::TaskStatus::InProgress.to_string(), task::TaskStatus::Completed.to_string());
+                println!(
+                    "Available statuses: {:?}, {:?}, {:?}",
+                    TaskStatus::NotStarted.to_string(),
+                    TaskStatus::InProgress.to_string(),
+                    TaskStatus::Completed.to_string()
+                );
                 let new_status = get_user_input("Enter new status");
                 println!();
-                let new_status = new_status.parse::<task::TaskStatus>();
+                let new_status = new_status.parse::<TaskStatus>();
                 match new_status {
                     Ok(parsed_status) => {
                         list_of_tasks.update_task_status(task_id, parsed_status);
                         break;
-                    },
+                    }
                     Err(_) => {
                         println!("Invalid status, please try again");
                         continue;
                     }
                 }
-            },
+            }
             _ => {
                 println!("Invalid field to update: {}", field_to_update);
                 println!();
@@ -282,7 +319,7 @@ fn delete_task(list_of_tasks: &mut TaskList) {
                 return;
             }
             task_id = parsed_task_id;
-        },
+        }
         Err(_) => {
             println!("Invalid task");
             press_enter();
@@ -296,7 +333,7 @@ fn delete_task(list_of_tasks: &mut TaskList) {
     match deletion_result {
         Ok(_) => {
             println!("Task deleted successfully");
-        },
+        }
         Err(_) => {
             println!("Failed to delete task");
         }
@@ -320,7 +357,10 @@ fn help() {
     println!("  {} - list all tasks", "list".bold().cyan());
     println!("    This will print a list of all tasks");
     println!("    Each task will have an ID, title, description, and due date. If a task doesn't have a description or due date, it will be marked as such");
-    println!("  {} - allows you to update a task", "update".bold().yellow());
+    println!(
+        "  {} - allows you to update a task",
+        "update".bold().yellow()
+    );
     println!("    This will allow you to update a task");
     println!("    You will first be asked to enter the ID of the task you want to update. Then you will be asked to select which field you want to update. Finally you will be asked to enter the new value for the field");
     println!("  {} - deletes a task", "delete".bold().red());

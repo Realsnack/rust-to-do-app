@@ -1,5 +1,6 @@
+use crate::naive_date_time_wrapper::NaiveDateTimeWrapper;
 use crate::task::Task;
-use crate::task::TaskStatus;
+use crate::{TaskStatus, persistence};
 
 // THINK: Maybe use a hashmap instead of a vector?
 pub struct TaskList {
@@ -39,7 +40,7 @@ impl TaskList {
         }
     }
 
-    pub fn update_task_due_date(&mut self, task_id: usize, due_date: chrono::NaiveDateTime) {
+    pub fn update_task_due_date(&mut self, task_id: usize, due_date: NaiveDateTimeWrapper) {
         let task = self.tasks.iter_mut().find(|t| t.id == task_id);
 
         if let Some(task) = task {
@@ -63,6 +64,16 @@ impl TaskList {
             Ok(())
         } else {
             Err(())
+        }
+    }
+
+    // fn to use persistence::save_tasks_to_csv
+    pub fn save_tasks_to_csv(&self){
+        let save_result = persistence::save_tasks_to_csv(&self.tasks);
+
+        match save_result {
+            Ok(_) => println!("Tasks saved to csv"),
+            Err(e) => println!("Error saving tasks to csv: {}", e),
         }
     }
 
