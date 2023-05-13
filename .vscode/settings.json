@@ -15,6 +15,7 @@
         ".vscode",
         ".vscode-insiders",
         "Cargo.lock",
-        "Cargo.toml"
+        "Cargo.toml",
+        "target"
     ]
 }

@@ -347,6 +347,7 @@ fn help() {
     println!("To-Do app by @realsnack");
     println!("https://github.com/Realsnack/rust-to-do-app");
     println!();
+    println!();
     println!("You can use these commands:");
     println!("  {} - Allows you to add a new task", "add".bold().green());
     println!("    The application will first ask you to enter a title for the task");
