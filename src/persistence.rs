@@ -1,7 +1,3 @@
-use std::{fs::File, io::{Write, Read}};
-
-use bincode::Options;
-
 use crate::task::Task;
 
 // Save task to csv using the csv crate
