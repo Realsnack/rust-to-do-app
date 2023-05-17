@@ -1,41 +1,14 @@
-use std::str::FromStr;
+use serde_derive::Serialize;
 
-use chrono::NaiveDateTime;
+use crate::TaskStatus;
+use crate::naive_date_time_wrapper::NaiveDateTimeWrapper;
 
-pub enum TaskStatus {
-    NotStarted,
-    InProgress,
-    Completed,
-}
-
-impl ToString for TaskStatus {
-    fn to_string(&self) -> String {
-        match self {
-            TaskStatus::NotStarted => "Not Started".to_string(),
-            TaskStatus::InProgress => "In Progress".to_string(),
-            TaskStatus::Completed => "Completed".to_string(),
-        }
-    }
-}
-
-impl FromStr for TaskStatus {
-    type Err = ();
-
-    fn from_str(input: &str) -> Result<TaskStatus, Self::Err> {
-        match input.to_lowercase().trim() {
-            "not started" => Ok(TaskStatus::NotStarted),
-            "in progress" => Ok(TaskStatus::InProgress),
-            "completed" => Ok(TaskStatus::Completed),
-            _ => Err(()),
-        }
-    }
-}
-
+#[derive(Debug, Serialize)]
 pub struct Task {
     pub id: usize,
     pub title: String,
     pub description: Option<String>,
-    pub due_date: Option<NaiveDateTime>,
+    pub due_date: Option<NaiveDateTimeWrapper>,
     pub status: TaskStatus,
 }
 
@@ -54,11 +27,23 @@ impl Task {
         self.description = Some(description);
     }
 
-    pub fn set_due_date(&mut self, due_date: NaiveDateTime) {
+    pub fn set_due_date(&mut self, due_date: NaiveDateTimeWrapper) {
         self.due_date = Some(due_date);
     }
 
     pub fn set_status(&mut self, status: TaskStatus) {
         self.status = status;
+    }
+}
+
+impl Clone for Task {
+    fn clone(&self) -> Self {
+        Task {
+            id: self.id,
+            title: self.title.clone(),
+            description: self.description.clone(),
+            due_date: self.due_date.clone(),
+            status: self.status.clone(),
+        }
     }
 }

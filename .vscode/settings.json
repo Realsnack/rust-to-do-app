@@ -3,6 +3,19 @@
         "./Cargo.toml",
     ],
     "cSpell.words": [
-        "chrono"
+        "bincode",
+        "chrono",
+        "fixint"
+    ],
+    "cSpell.ignorePaths": [
+        "package-lock.json",
+        "node_modules",
+        "vscode-extension",
+        ".git/objects",
+        ".vscode",
+        ".vscode-insiders",
+        "Cargo.lock",
+        "Cargo.toml",
+        "target"
     ]
 }
