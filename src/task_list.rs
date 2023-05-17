@@ -2,6 +2,8 @@ use crate::task::Task;
 use crate::task::TaskStatus;
 
 // THINK: Maybe use a hashmap instead of a vector?
+// WHY: We might use a hashmap because we want to be able to access tasks by id.
+// WHY NOT: We're using a vector because we want to preserve the order of the tasks.
 pub struct TaskList {
     pub tasks: Vec<Task>,
     task_counter: usize,
