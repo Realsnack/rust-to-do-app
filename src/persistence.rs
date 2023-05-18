@@ -1,4 +1,7 @@
-use crate::task::Task;
+use std::str::FromStr;
+
+use crate::naive_date_time_wrapper::NaiveDateTimeWrapper;
+use crate::{task::Task, task_status::TaskStatus};
 
 // Save task to csv using the csv crate
 pub fn save_tasks_to_csv(tasks: &Vec<Task>) -> Result<(), Box<dyn std::error::Error>> {
@@ -13,3 +16,24 @@ pub fn save_tasks_to_csv(tasks: &Vec<Task>) -> Result<(), Box<dyn std::error::Er
 }
 
 // TODO: Create load tasks from csv function
+pub fn load_tasks_from_csv() -> Result<Vec<Task>, Box<dyn std::error::Error>> {
+    let mut tasks: Vec<Task> = Vec::new();
+
+    let mut reader = csv::Reader::from_path("tasks.csv")?;
+
+    // Read lines, split by comma, and create a task
+    for result in reader.records() {
+        let record = result?;
+        let mut task = Task::new(
+            record.get(0).unwrap().parse()?,
+            record.get(1).unwrap().parse()?,
+        );
+        task.set_description(record.get(2).unwrap().parse()?);
+        task.set_due_date(NaiveDateTimeWrapper::from_str(record.get(3).unwrap()).unwrap());
+        task.set_status(TaskStatus::from_str(record.get(4).unwrap()).unwrap());
+
+        tasks.push(task);
+    }
+
+    Ok(tasks)
+}

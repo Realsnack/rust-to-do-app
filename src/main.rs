@@ -27,6 +27,8 @@ fn main() {
     }
 
     let mut list_of_tasks = TaskList::new();
+    
+    list_of_tasks.load_tasks_from_csv();
 
     println!(
         "Created list of tasks with {} tasks",
@@ -44,7 +46,7 @@ fn main() {
             SupportedCommand::Delete => delete_task(&mut list_of_tasks),
             SupportedCommand::Help => help(),
             SupportedCommand::Exit => {
-                list_of_tasks.save_tasks_to_csv();
+                // list_of_tasks.save_tasks_to_csv();
                 println!("Exiting");
                 break;
             }

@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use chrono::NaiveDateTime;
 use serde::{Serialize, Serializer};
 
@@ -35,5 +37,18 @@ impl Serialize for NaiveDateTimeWrapper {
 impl Clone for NaiveDateTimeWrapper {
     fn clone(&self) -> Self {
         NaiveDateTimeWrapper(self.0.clone())
+    }
+}
+
+impl FromStr for NaiveDateTimeWrapper {
+    type Err = ();
+
+    fn from_str(input: &str) -> Result<NaiveDateTimeWrapper, Self::Err> {
+        let date_time = NaiveDateTime::parse_from_str(input, "%Y-%m-%d %H:%M:%S");
+
+        match date_time {
+            Ok(date_time) => Ok(NaiveDateTimeWrapper(date_time)),
+            Err(_) => Err(()),
+        }
     }
 }
