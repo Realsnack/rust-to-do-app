@@ -1,3 +1,5 @@
+use std::error::Error;
+
 use crate::naive_date_time_wrapper::NaiveDateTimeWrapper;
 use crate::task::Task;
 use crate::{TaskStatus, persistence};
@@ -83,12 +85,9 @@ impl TaskList {
         self.tasks.iter().find(|t| t.id == task_id)
     }
 
-    pub fn load_tasks_from_csv(&self) {
+    pub fn load_tasks_from_csv(&self) -> Result<Vec<Task>, Box<dyn Error>> {
         let load_result = persistence::load_tasks_from_csv();
 
-        match load_result {
-            Ok(tasks) => println!("Tasks loaded from csv: {:?}", tasks),
-            Err(e) => println!("Error loading tasks from csv: {}", e),
-        }
+        return load_result;
     }
 }

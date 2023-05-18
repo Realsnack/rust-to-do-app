@@ -28,9 +28,20 @@ pub fn load_tasks_from_csv() -> Result<Vec<Task>, Box<dyn std::error::Error>> {
             record.get(0).unwrap().parse()?,
             record.get(1).unwrap().parse()?,
         );
-        task.set_description(record.get(2).unwrap().parse()?);
-        task.set_due_date(NaiveDateTimeWrapper::from_str(record.get(3).unwrap()).unwrap());
-        task.set_status(TaskStatus::from_str(record.get(4).unwrap()).unwrap());
+        let description:String = record.get(2).unwrap().parse()?;
+        let due_date = NaiveDateTimeWrapper::from_str(record.get(3).unwrap());
+        let status = TaskStatus::from_str(record.get(4).unwrap());
+
+        task.set_description(description);
+        match due_date {
+            Ok(due_date) => task.set_due_date(due_date),
+            Err(_) => (),
+        }
+
+        match status {
+            Ok(status) => task.set_status(status),
+            Err(_) => task.set_status(TaskStatus::NotStarted),
+        }
 
         tasks.push(task);
     }
