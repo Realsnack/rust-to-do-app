@@ -181,15 +181,10 @@ fn update_task(list_of_tasks: &mut TaskList) {
     let task_id_input = get_user_input("Enter task Id to update");
     // convert task_id to usize
     let task_id_input = task_id_input.parse::<usize>();
-    let mut task_id: usize = 0;
+    let task_id: usize;
 
     match task_id_input {
         Ok(parsed_task_id) => {
-            if task_id > list_of_tasks.tasks.len() {
-                println!("Invalid task Id: {}", task_id);
-                press_enter();
-                return;
-            }
             task_id = parsed_task_id;
         }
         Err(_) => {
@@ -316,15 +311,10 @@ fn delete_task(list_of_tasks: &mut TaskList) {
     let task_id_input = get_user_input("Enter task Id to update");
     // convert task_id to usize
     let task_id_input = task_id_input.parse::<usize>();
-    let mut task_id: usize = 0;
+    let task_id;
 
     match task_id_input {
         Ok(parsed_task_id) => {
-            if task_id > list_of_tasks.tasks.len() {
-                println!("Invalid task Id: {}", task_id);
-                press_enter();
-                return;
-            }
             task_id = parsed_task_id;
         }
         Err(_) => {
