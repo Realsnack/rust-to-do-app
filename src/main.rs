@@ -149,7 +149,7 @@ fn add_task(list_of_tasks: &mut TaskList) {
 fn list_tasks(list_of_tasks: &TaskList) {
     println!("{}", CLEAR_SCREEN);
 
-    if list_of_tasks.tasks.len() == 0 {
+    if list_of_tasks.tasks.is_empty() {
         println!("No tasks to list");
         press_enter();
         return;
@@ -172,7 +172,7 @@ fn list_tasks(list_of_tasks: &TaskList) {
 }
 
 fn update_task(list_of_tasks: &mut TaskList) {
-    if list_of_tasks.tasks.len() == 0 {
+    if list_of_tasks.tasks.is_empty() {
         println!("No tasks to update");
         press_enter();
         return;
@@ -296,17 +296,12 @@ fn update_task(list_of_tasks: &mut TaskList) {
 }
 
 fn delete_task(list_of_tasks: &mut TaskList) {
-    if list_of_tasks.tasks.len() == 0 {
+    if list_of_tasks.tasks.is_empty() {
         println!("No tasks to delete");
         press_enter();
         return;
     }
 
-    if list_of_tasks.tasks.len() == 0 {
-        println!("No tasks to update");
-        press_enter();
-        return;
-    }
     let task_id_input = get_user_input("Enter task Id to update");
     // convert task_id to usize
     let task_id_input = task_id_input.parse::<usize>();
