@@ -3,7 +3,7 @@ use std::str::FromStr;
 use chrono::NaiveDateTime;
 use serde::{Serialize, Serializer};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct NaiveDateTimeWrapper(pub NaiveDateTime);
 
 impl NaiveDateTimeWrapper {
@@ -31,12 +31,6 @@ impl Serialize for NaiveDateTimeWrapper {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where S: Serializer {
         serializer.serialize_str(&self.0.format("%Y-%m-%d %H:%M:%S").to_string())
-    }
-}
-
-impl Clone for NaiveDateTimeWrapper {
-    fn clone(&self) -> Self {
-        NaiveDateTimeWrapper(self.0.clone())
     }
 }
 
