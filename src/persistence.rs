@@ -33,9 +33,9 @@ pub fn load_tasks_from_csv() -> Result<Vec<Task>, Box<dyn std::error::Error>> {
         let status = TaskStatus::from_str(record.get(4).unwrap());
 
         task.set_description(description);
-        match due_date {
-            Ok(due_date) => task.set_due_date(due_date),
-            Err(_) => (),
+
+        if let Ok(due_date) = due_date {
+            task.set_due_date(due_date);
         }
 
         match status {
