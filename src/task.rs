@@ -42,7 +42,7 @@ impl Clone for Task {
             id: self.id,
             title: self.title.clone(),
             description: self.description.clone(),
-            due_date: self.due_date.clone(),
+            due_date: self.due_date,
             status: self.status.clone(),
         }
     }

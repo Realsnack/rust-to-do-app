@@ -207,8 +207,7 @@ fn update_task(list_of_tasks: &mut TaskList) {
     let due_date = list_of_tasks
         .get_task_by_id(task_id)
         .unwrap()
-        .due_date
-        .clone();
+        .due_date;
     if due_date.is_some() {
         println!("  Due date: {}", due_date.unwrap());
     } else {
