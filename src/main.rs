@@ -30,8 +30,8 @@ fn main() {
     
     let load_result = list_of_tasks.load_tasks_from_csv();
 
-    if load_result.is_ok() {
-        list_of_tasks.tasks = load_result.unwrap();
+    if let Ok(tasks) = load_result {
+        list_of_tasks.tasks = tasks;
     }
 
     println!(
