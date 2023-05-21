@@ -12,6 +12,12 @@ pub struct TaskList {
     task_counter: usize,
 }
 
+impl Default for TaskList {
+    fn default() -> Self {
+        TaskList::new()
+    }
+}
+
 impl TaskList {
     pub fn new() -> TaskList {
         TaskList {
