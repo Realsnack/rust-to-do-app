@@ -180,18 +180,14 @@ fn update_task(list_of_tasks: &mut TaskList) {
     let task_id_input = get_user_input("Enter task Id to update");
     // convert task_id to usize
     let task_id_input = task_id_input.parse::<usize>();
-    let task_id: usize;
-
-    match task_id_input {
-        Ok(parsed_task_id) => {
-            task_id = parsed_task_id;
-        }
+    let task_id = match task_id_input {
+        Ok(parsed_task_id) => parsed_task_id,
         Err(_) => {
             println!("Invalid task");
             press_enter();
             return;
         }
-    }
+    };
 
     println!("{}", CLEAR_SCREEN);
     // print task and details
@@ -305,18 +301,14 @@ fn delete_task(list_of_tasks: &mut TaskList) {
     let task_id_input = get_user_input("Enter task Id to update");
     // convert task_id to usize
     let task_id_input = task_id_input.parse::<usize>();
-    let task_id;
-
-    match task_id_input {
-        Ok(parsed_task_id) => {
-            task_id = parsed_task_id;
-        }
+    let task_id = match task_id_input {
+        Ok(parsed_task_id) => parsed_task_id,
         Err(_) => {
             println!("Invalid task");
             press_enter();
             return;
         }
-    }
+    };
 
     println!("{}", CLEAR_SCREEN);
     let deletion_result = list_of_tasks.delete_task(task_id);
