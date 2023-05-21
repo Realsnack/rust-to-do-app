@@ -20,14 +20,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup cache for .cargo and target
+      - name: Setup .cargo/bin cache
         uses: actions/cache@v2
         with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          path: ~/.cargo/bin
+          key: ${{ runner.os }}-cargo-bin-${{ hashFiles('**/Cargo.lock') }}
+          
+      - name: Setup target cache
+        uses: actions/cache@v2
+        with:
+          path: target
+          key: ${{ runner.os }}-target-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
@@ -38,7 +41,9 @@ jobs:
           override: true
 
       - name: Install required cargo
-        run: cargo install clippy-sarif sarif-fmt
+        run: |
+          cargo install --list | grep clippy-sarif || cargo install clippy-sarif
+          cargo install --list | grep sarif-fmt || cargo install sarif-fmt
 
       - name: Run rust-clippy
         run: |
