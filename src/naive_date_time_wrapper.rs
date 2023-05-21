@@ -12,7 +12,7 @@ impl NaiveDateTimeWrapper {
     }
 
     pub fn parse_from_str(date_time: &str, fmt: &str) -> Result<NaiveDateTimeWrapper, ()> {
-        let date_time = NaiveDateTime::parse_from_str(date_time, &fmt);
+        let date_time = NaiveDateTime::parse_from_str(date_time, fmt);
 
         match date_time {
             Ok(date_time) => Ok(NaiveDateTimeWrapper(date_time)),
