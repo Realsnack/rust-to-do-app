@@ -88,6 +88,6 @@ impl TaskList {
     pub fn load_tasks_from_csv(&self) -> Result<Vec<Task>, Box<dyn Error>> {
         let load_result = persistence::load_tasks_from_csv();
 
-        return load_result;
+        load_result
     }
 }
