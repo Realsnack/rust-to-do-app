@@ -6,6 +6,7 @@ pub enum SupportedCommand {
     Update,
     Delete,
     Help,
+    Clear,
     Exit
 }
 
@@ -17,6 +18,7 @@ impl ToString for SupportedCommand {
             SupportedCommand::Update => String::from("update"),
             SupportedCommand::Delete => String::from("delete"),
             SupportedCommand::Help => String::from("help"),
+            SupportedCommand::Clear => String::from("clear"),
             SupportedCommand::Exit => String::from("exit"),
         }
     }
@@ -32,6 +34,7 @@ impl FromStr for SupportedCommand {
             "update" => Ok(SupportedCommand::Update),
             "delete" => Ok(SupportedCommand::Delete),
             "help" => Ok(SupportedCommand::Help),
+            "clear" => Ok(SupportedCommand::Clear),
             "exit" => Ok(SupportedCommand::Exit),
             _ => Err(()),
         }

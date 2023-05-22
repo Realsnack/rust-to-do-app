@@ -15,7 +15,7 @@ use std::{
 use command::SupportedCommand;
 use task_list::TaskList;
 
-use crate::{task_status::TaskStatus, naive_date_time_wrapper::NaiveDateTimeWrapper};
+use crate::{naive_date_time_wrapper::NaiveDateTimeWrapper, task_status::TaskStatus};
 
 const CLEAR_SCREEN: &str = "\x1B[2J";
 
@@ -27,7 +27,7 @@ fn main() {
     }
 
     let mut list_of_tasks = TaskList::new();
-    
+
     let load_result = list_of_tasks.load_tasks_from_csv();
 
     if let Ok(tasks) = load_result {
@@ -49,6 +49,7 @@ fn main() {
             SupportedCommand::Update => update_task(&mut list_of_tasks),
             SupportedCommand::Delete => delete_task(&mut list_of_tasks),
             SupportedCommand::Help => help(),
+            SupportedCommand::Clear => clear_screen(),
             SupportedCommand::Exit => {
                 list_of_tasks.save_tasks_to_csv();
                 println!("Exiting");
@@ -66,6 +67,7 @@ fn command_selection() -> SupportedCommand {
     println!("  {} - updates a task", "update".bold().yellow());
     println!("  {} - deletes a task", "delete".bold().red());
     println!("  {} - prints this help message", "help".bold().grey());
+    println!("  {} - clears the screen", "clear".bold().yellow());
     println!("  {} - exits the program", "exit".bold().magenta());
     println!();
 
@@ -204,10 +206,7 @@ fn update_task(list_of_tasks: &mut TaskList) {
             .clone()
             .unwrap_or("Not provided".to_string())
     );
-    let due_date = list_of_tasks
-        .get_task_by_id(task_id)
-        .unwrap()
-        .due_date;
+    let due_date = list_of_tasks.get_task_by_id(task_id).unwrap().due_date;
     if due_date.is_some() {
         println!("  Due date: {}", due_date.unwrap());
     } else {
@@ -239,10 +238,8 @@ fn update_task(list_of_tasks: &mut TaskList) {
                         get_user_input("Enter new due date and time (dd.mm.YYYY HH:MM)");
                     println!();
                     let new_date_string = new_date_string + ":00";
-                    let parsed_date = NaiveDateTimeWrapper::parse_from_str(
-                        &new_date_string,
-                        "%d.%m.%Y %H:%M:%S",
-                    );
+                    let parsed_date =
+                        NaiveDateTimeWrapper::parse_from_str(&new_date_string, "%d.%m.%Y %H:%M:%S");
                     match parsed_date {
                         Ok(_) => {
                             list_of_tasks.update_task_due_date(task_id, parsed_date.unwrap());
@@ -362,4 +359,8 @@ fn press_enter() {
     io::stdin()
         .read_line(&mut String::new())
         .expect("Failed to read line");
+}
+
+fn clear_screen() {
+    println!("{}", CLEAR_SCREEN);
 }
