@@ -2,7 +2,7 @@ use std::error::Error;
 
 use crate::naive_date_time_wrapper::NaiveDateTimeWrapper;
 use crate::task::Task;
-use crate::{TaskStatus, persistence};
+use crate::{persistence, TaskStatus};
 
 // THINK: Maybe use a hashmap instead of a vector?
 // WHY: We might use a hashmap because we want to be able to access tasks by id.
@@ -78,7 +78,7 @@ impl TaskList {
     }
 
     // fn to use persistence::save_tasks_to_csv
-    pub fn save_tasks_to_csv(&self){
+    pub fn save_tasks_to_csv(&self) {
         let save_result = persistence::save_tasks_to_csv(&self.tasks);
 
         match save_result {
@@ -95,5 +95,25 @@ impl TaskList {
         let load_result = persistence::load_tasks_from_csv();
 
         load_result
+    }
+
+    pub fn update_task_counter(&mut self, task_counter: usize) {
+        self.task_counter = task_counter;
+    }
+
+    pub fn get_task_counter(&self) -> usize {
+        self.task_counter
+    }
+
+    pub fn get_highest_task_id(&self) -> usize {
+        let mut highest_task_id = 0;
+
+        for task in &self.tasks {
+            if task.id > highest_task_id {
+                highest_task_id = task.id;
+            }
+        }
+
+        highest_task_id
     }
 }

@@ -1,6 +1,8 @@
 pub mod command;
+pub mod configuration;
 pub mod naive_date_time_wrapper;
 pub mod persistence;
+pub mod supported_persistence;
 pub mod task;
 pub mod task_list;
 pub mod task_status;
@@ -13,6 +15,7 @@ use std::{
 };
 
 use command::SupportedCommand;
+use configuration::Configuration;
 use task_list::TaskList;
 
 use crate::{naive_date_time_wrapper::NaiveDateTimeWrapper, task_status::TaskStatus};
@@ -26,18 +29,24 @@ fn main() {
         println!("{}", CLEAR_SCREEN);
     }
 
+    let mut config = Configuration::load_or_create_configuration("config.bin");
+
     let mut list_of_tasks = TaskList::new();
-
     let load_result = list_of_tasks.load_tasks_from_csv();
-
     if let Ok(tasks) = load_result {
         list_of_tasks.tasks = tasks;
+        list_of_tasks.update_task_counter(config.task_counter);
     }
 
     println!(
         "Created list of tasks with {} tasks",
         list_of_tasks.tasks.len()
     );
+
+    if config.task_counter == 0 {
+        config.task_counter = list_of_tasks.get_highest_task_id();
+        list_of_tasks.update_task_counter(config.task_counter);
+    }
 
     loop {
         let command = command_selection();
@@ -52,6 +61,8 @@ fn main() {
             SupportedCommand::Clear => clear_screen(),
             SupportedCommand::Exit => {
                 list_of_tasks.save_tasks_to_csv();
+                config.task_counter = list_of_tasks.get_task_counter();
+                config.save_configuration("config.bin");
                 println!("Exiting");
                 break;
             }
