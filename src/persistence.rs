@@ -15,7 +15,6 @@ pub fn save_tasks_to_csv(tasks: &Vec<Task>) -> Result<(), Box<dyn std::error::Er
     Ok(())
 }
 
-// TODO: Create load tasks from csv function
 pub fn load_tasks_from_csv() -> Result<Vec<Task>, Box<dyn std::error::Error>> {
     let mut tasks: Vec<Task> = Vec::new();
 
